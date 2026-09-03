@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+// VITE_FIREBASE_API_KEY=AIzaSyAUD0LhntBLkWd8Aa6qEVY5Ou5Yn9N8VEA

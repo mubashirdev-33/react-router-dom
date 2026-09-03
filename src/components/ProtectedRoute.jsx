@@ -1,13 +1,44 @@
+
+import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { Children, useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
+import app from "../firebase/config";
 
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
+const ProtectedRoute = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const auth = getAuth(app);
+
+  const getuser = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+
+      setLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    getuser();
+  }, []);
+
+  if (loading) {
+    return <h1 className="loading">Loading...</h1>;
   }
 
-  return <Outlet />;
+  if (user) {
+    return Outlet ? <Outlet /> : Children;
+  }else{
+    return <Navigate to="/login" />;
+  }
+
+ 
 };
 
 export default ProtectedRoute;
+

@@ -1,15 +1,43 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import app from "../firebase/config.js";
+import { ToastContainer,toast } from "react-toastify";
 
+const auth = getAuth(app);
 const Signup = () => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const signupHandler = () => {
+
+
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed up 
+    const user = userCredential.user;
+    toast.success("Account created successfully!");
+    setTimeout(() => {
+      navigate("/login");
+    }, 2000);
+  })
+  .catch((error) => {
+    
+   if (error.code === "auth/email-already-in-use") { toast.error("This email is already registered"); } else if (error.code === "auth/invalid-email") { toast.error("Please enter a valid email"); } else if (error.code === "auth/weak-password") { toast.error("Password is too weak"); } else { toast.error(" Please fill all fields correctly"); }
+  });
+  };
+
   return (
     <main className="page">
+      <ToastContainer />
       <h1>Signup Page</h1>
 
-      <input type="text" placeholder="Enter Name" />
-      <input type="email" placeholder="Enter Email" />
-      <input type="password" placeholder="Create Password" />
+      
+      <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter Email" />
+      <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Create Password" />
 
-      <button className="button">Signup</button>
+      <button className="button" onClick={signupHandler}>Signup</button>
 
       <p>Already have an account?</p>
       <button className="Already-button">

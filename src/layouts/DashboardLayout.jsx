@@ -1,10 +1,14 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from 'firebase/auth'
+
+
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
-
+const auth = getAuth()
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
+    
+    signOut(auth)
     navigate("/login");
   };
 

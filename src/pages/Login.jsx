@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import app from "../firebase/config";
+import app from "../firebase/config.js";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -23,6 +23,8 @@ const Login = () => {
         const user = userCredential.user;
         if (user) {
           toast.success("Login successful!");
+      setEmail("");
+      setPassword("");
           setTimeout(() => {
             navigate("/dashboard/profile");
           }, 2000);
@@ -31,18 +33,18 @@ const Login = () => {
       })
       .catch((error) => {
         if (error.code === "auth/invalid-email") {
-  return toast.error("Please enter a valid email");
-}
+          return toast.error("Please enter a valid email");
+        }
 
-if (error.code === "auth/wrong-password") {
-  return toast.error("Wrong password");
-}
+        if (error.code === "auth/wrong-password") {
+          return toast.error("Wrong password");
+        }
 
-if (error.code === "auth/invalid-credential") {
-  return toast.error("Invalid email or password");
-}
+        if (error.code === "auth/invalid-credential") {
+          return toast.error("Invalid email or password");
+        }
 
-       
+
       });
   };
 

@@ -1,31 +1,67 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import app from "../firebase/config.js";
-import { ToastContainer,toast } from "react-toastify";
+import app, { db } from "../firebase/config.js";
+import { ToastContainer, toast } from "react-toastify";
+import { collection, addDoc } from "firebase/firestore";
 
 const auth = getAuth(app);
 const Signup = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const signupHandler = () => {
+  const [username, setUsername] = useState("");
+  const [age, setAge] = useState("");
+  // const navigate = useNavigate();
 
 
-createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed up 
-    const user = userCredential.user;
-    toast.success("Account created successfully!");
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
-  })
-  .catch((error) => {
+  const signupHandler = async () => {
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (user) {
+        try {
+          const docRef = await addDoc(collection(db, "users"), {
+            email,
+            password,
+            username,
+            age
+          });
+          console.log("Document written with ID: ", docRef.id);
+    setEmail("");
+    setPassword("");
+    setUsername("");
+    setAge("");
+     
+          toast.success("Account created successfully!");
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      }
+
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") { toast.error("This email is already registered"); } else if (error.code === "auth/invalid-email") { toast.error("Please enter a valid email"); } else if (error.code === "auth/weak-password") { toast.error("Password is too weak"); } else { toast.error(" Please fill all fields correctly"); }
+
+    }
+
+
+    // createUserWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     // Signed up 
+    //     const user = userCredential.user;
+    //     toast.success("Account created successfully!");
+    //     setTimeout(() => {
+    //       navigate("/login");
+    //     }, 2000);
     
-   if (error.code === "auth/email-already-in-use") { toast.error("This email is already registered"); } else if (error.code === "auth/invalid-email") { toast.error("Please enter a valid email"); } else if (error.code === "auth/weak-password") { toast.error("Password is too weak"); } else { toast.error(" Please fill all fields correctly"); }
-  });
+    //   })
+    //   .catch((error) => {
+
+    //     
+    //   });
   };
 
   return (
@@ -33,7 +69,9 @@ createUserWithEmailAndPassword(auth, email, password)
       <ToastContainer />
       <h1>Signup Page</h1>
 
-      
+      <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Enter Username" />
+      <input value={age} onChange={(e) => setAge(e.target.value)} type="number" placeholder="Enter Age" />
+
       <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter Email" />
       <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Create Password" />
 

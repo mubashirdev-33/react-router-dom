@@ -70,7 +70,17 @@ const Profile = () => {
           <div className="profile-container">
             <div className="profile-header-section">
               <div className="profile-avatar-circle">
-                {user?.username?.charAt(0).toUpperCase()}
+                {user?.userImage ? (
+                  <img
+                    src={user?.userImage}
+                    alt="Profile"
+                    className="profile-avatar"
+                  />
+                ) : (
+                  <div className="profile-avatar-placeholder">
+                    {user?.username?.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
 
               <div className="profile-meta-text">

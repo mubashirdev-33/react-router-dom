@@ -4,6 +4,8 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import app, { db } from "../firebase/config.js";
 import { ToastContainer, toast } from "react-toastify";
 import { collection, addDoc } from "firebase/firestore";
+import { uploadImageToCloudinary } from "../Cloudinary/cloud.js";
+
 
 const auth = getAuth(app);
 const Signup = () => {
@@ -12,9 +14,10 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [age, setAge] = useState("");
+  const [userImage, setUserImage] = useState(null);
   // const navigate = useNavigate();
 
-
+  
   const signupHandler = async () => {
     try {
       const { user } = await createUserWithEmailAndPassword(
@@ -23,12 +26,15 @@ const Signup = () => {
         password
       );
       if (user) {
+      let imgUrl = await  uploadImageToCloudinary(userImage)
+      console.log(imgUrl)
         try {
           const docRef = await addDoc(collection(db, "users"), {
             email,
             password,
             username,
-            age
+            age,
+            userImage: imgUrl
           });
           console.log("Document written with ID: ", docRef.id);
     setEmail("");
@@ -37,6 +43,9 @@ const Signup = () => {
     setAge("");
      
           toast.success("Account created successfully!");
+        //   setTimeout(() => {
+        //   navigate("/login");
+        // }, 2000);
         } catch (e) {
           console.error("Error adding document: ", e);
         }
@@ -71,7 +80,7 @@ const Signup = () => {
 
       <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Enter Username" />
       <input value={age} onChange={(e) => setAge(e.target.value)} type="number" placeholder="Enter Age" />
-
+ <input  onChange={(e) => setUserImage(e.target.files[0])} type="file" placeholder="Upload Image" />
       <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter Email" />
       <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Create Password" />
 

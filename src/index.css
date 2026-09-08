@@ -216,7 +216,15 @@ input:focus {
   border-bottom: 1px solid #e5e7eb; /* Facebook-style subtle separator line */
   padding-bottom: 20px;
 }
-
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+}
 .profile-avatar-circle {
   width: 60px;
   height: 60px;

@@ -19,6 +19,9 @@ const Signup = () => {
 
   
   const signupHandler = async () => {
+     if (!username.trim() || !age || !email.trim() || !password.trim() || !userImage) {
+    return toast.error("Please fill all fields");
+  }
     try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
@@ -30,6 +33,7 @@ const Signup = () => {
       console.log(imgUrl)
         try {
           const docRef = await addDoc(collection(db, "users"), {
+            // uid: user.uid,
             email,
             password,
             username,
@@ -41,11 +45,12 @@ const Signup = () => {
     setPassword("");
     setUsername("");
     setAge("");
+    setUserImage(null);
      
           toast.success("Account created successfully!");
-        //   setTimeout(() => {
-        //   navigate("/login");
-        // }, 2000);
+          setTimeout(() => {
+          navigate("/login");
+        }, 2000);
         } catch (e) {
           console.error("Error adding document: ", e);
         }
